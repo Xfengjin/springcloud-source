@@ -1,0 +1,39 @@
+server:
+  port: 3355
+
+spring:
+  application:
+    name: config-client
+  cloud:
+    # config客户端配置
+    config:
+      label: main #分支名
+      name: config #配置文件名称
+      profile: dev # 读取后缀名称
+      uri: http://localhost:3344 #配置中心地址
+
+#rabbitmq相关配置 15672是web管理界面的d端口，5672是MQ的访问端点
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+#服务注册到eureka
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka7001.com:7001/eureka,http://eureka7002.com:7002/eureka
+
+
+## 以下是动态配置
+
+######## 需要手动执行此命令，curl -X POST "http://localhost:3355/actuator/refresh"
+######## 执行完了之后不需要重启服务的
+
+# 暴露监控端点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

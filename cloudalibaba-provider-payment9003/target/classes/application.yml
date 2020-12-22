@@ -1,0 +1,16 @@
+server:
+  port: 9003
+
+spring:
+  application:
+    name: nacos-payment-provider
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848 #通过nginx注册到nacos
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'

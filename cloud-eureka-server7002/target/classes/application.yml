@@ -1,0 +1,13 @@
+server:
+  port: 7002
+
+# #######################集群版配置#####################
+# ####################### 注意：windows上需要修改host文件 例：127.0.0.1 eureka7001.com  #####################
+eureka:
+  instance:
+    hostname: eureka7002.com #eureka服务端实例名
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: http://eureka7001.com:7001/eureka/

@@ -1,0 +1,44 @@
+server:
+  port: 9527
+
+spring:
+  application:
+    name: cloud-gateway
+  cloud:
+    gateway:
+      # 通过服务发现，开启从注册中心动态创建路由，利用微服务名进行路由
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: payment_routh # payment-route # 路由的ID, 没有固定的规则，要求唯一，建议配个服务名
+          ## uri: http://localhost:8001 # 匹配后提供服务的路由地址
+          uri: lb://cloud-payment-service # 通过注册中心的微服务名，匹配后提供服务的路由地址，可以提供负载均衡
+          predicates:
+            - Path=/payment/get/** # 断言，路径相匹配的进行路由
+            - After=2020-11-14T21:46:07.758+08:00[Asia/Shanghai] # 时间获取的当时有在test里面写明
+            # - Before=2020-12-31T20:20:20.000000020+08:00[Asia/Shanghai]
+            # - BetWeen=2020-11-14T21:46:07.758+08:00[Asia/Shanghai],2020-12-31T20:20:20.000000020+08:00[Asia/Shanghai]
+            # - Cookie=username,fengjin # curl http://localhost:9527/payment/lb --cookie "username=fengjin" 正确写法
+
+        - id: payment_routh2
+          # uri: http://localhost:8001
+          uri: lb://cloud-payment-service
+          predicates:
+            - Path=/payment/lb/**
+            # - After=2020-11-14T21:46:07.758+08:00[Asia/Shanghai] # 时间获取的当时有在test里面写明
+            # - Before=2020-12-31T20:20:20.000000020+08:00[Asia/Shanghai]
+            # - BetWeen=2020-11-14T21:46:07.758+08:00[Asia/Shanghai],2020-12-31T20:20:20.000000020+08:00[Asia/Shanghai]
+            # - Cookie=username,fengjin # curl http://localhost:9527/payment/lb --cookie "username=fengjin" 正确写法
+            # - Header=X-Request-Id, \d+ # 请求头要有X-Request-Id属性并且值为整数的正则表达式 正确写法：curl http://localhost:9527/payment/lb -H "X-Request-Id:123"
+          #filters:
+            # - AddRequestParameter=X-Request-Id,1024 #过滤器工厂会在匹配的请求头上加上一对请求头，名称为X-Request-Id的值为1024。 单一过滤，全局过滤则使用自定义配置的方式
+
+eureka:
+  instance:
+    hostname: cloud-gateway-service
+  client: #服务提供者provider注册进eureka服务列表
+    service-url:
+      register-with-eureka: true
+      fetch-registry: true
+      defaultZone: http://eureka7001.com:7001/eureka,http://eureka7002.com:7002/eureka
